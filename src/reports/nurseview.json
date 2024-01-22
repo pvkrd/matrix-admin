@@ -1,0 +1,382 @@
+[  {
+  "$match": {
+    "status": { "$ne": "Unavailable" }
+  }
+},
+  {
+    "$lookup": {
+      "from": "visits",
+      "localField": "appointmentId",
+      "foreignField": "appointmentId",
+      "as": "appointmentId_lookup_visits"
+    }
+  },
+  {
+    "$addFields": {
+      "__alias_0": {
+        "$arrayElemAt": [
+          {
+            "$switch": {
+              "branches": [
+                {
+                  "case": {
+                    "$isArray": "$appointmentId_lookup_visits.appointmentDate"
+                  },
+                  "then": "$appointmentId_lookup_visits.appointmentDate"
+                },
+                {
+                  "case": {
+                    "$in": [
+                      {
+                        "$type": "$appointmentId_lookup_visits.appointmentDate"
+                      },
+                      [
+                        "null",
+                        "missing",
+                        "object"
+                      ]
+                    ]
+                  },
+                  "then": []
+                }
+              ],
+              "default": [
+                "$appointmentId_lookup_visits.appointmentDate"
+              ]
+            }
+          },
+          0
+        ]
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "__alias_1": {
+        "$arrayElemAt": [
+          {
+            "$switch": {
+              "branches": [
+                {
+                  "case": {
+                    "$isArray": {
+                      "$map": {
+                        "input": "$appointmentId_lookup_visits",
+                        "as": "value",
+                        "in": {
+                          "$arrayElemAt": [
+                            {
+                              "$switch": {
+                                "branches": [
+                                  {
+                                    "case": {
+                                      "$isArray": "$$value.member.memberAddresses.zip"
+                                    },
+                                    "then": "$$value.member.memberAddresses.zip"
+                                  },
+                                  {
+                                    "case": {
+                                      "$in": [
+                                        {
+                                          "$type": "$$value.member.memberAddresses.zip"
+                                        },
+                                        [
+                                          "null",
+                                          "missing",
+                                          "object"
+                                        ]
+                                      ]
+                                    },
+                                    "then": []
+                                  }
+                                ],
+                                "default": [
+                                  "$$value.member.memberAddresses.zip"
+                                ]
+                              }
+                            },
+                            0
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "then": {
+                    "$map": {
+                      "input": "$appointmentId_lookup_visits",
+                      "as": "value",
+                      "in": {
+                        "$arrayElemAt": [
+                          {
+                            "$switch": {
+                              "branches": [
+                                {
+                                  "case": {
+                                    "$isArray": "$$value.member.memberAddresses.zip"
+                                  },
+                                  "then": "$$value.member.memberAddresses.zip"
+                                },
+                                {
+                                  "case": {
+                                    "$in": [
+                                      {
+                                        "$type": "$$value.member.memberAddresses.zip"
+                                      },
+                                      [
+                                        "null",
+                                        "missing",
+                                        "object"
+                                      ]
+                                    ]
+                                  },
+                                  "then": []
+                                }
+                              ],
+                              "default": [
+                                "$$value.member.memberAddresses.zip"
+                              ]
+                            }
+                          },
+                          0
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "case": {
+                    "$in": [
+                      {
+                        "$type": {
+                          "$map": {
+                            "input": "$appointmentId_lookup_visits",
+                            "as": "value",
+                            "in": {
+                              "$arrayElemAt": [
+                                {
+                                  "$switch": {
+                                    "branches": [
+                                      {
+                                        "case": {
+                                          "$isArray": "$$value.member.memberAddresses.zip"
+                                        },
+                                        "then": "$$value.member.memberAddresses.zip"
+                                      },
+                                      {
+                                        "case": {
+                                          "$in": [
+                                            {
+                                              "$type": "$$value.member.memberAddresses.zip"
+                                            },
+                                            [
+                                              "null",
+                                              "missing",
+                                              "object"
+                                            ]
+                                          ]
+                                        },
+                                        "then": []
+                                      }
+                                    ],
+                                    "default": [
+                                      "$$value.member.memberAddresses.zip"
+                                    ]
+                                  }
+                                },
+                                0
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      [
+                        "null",
+                        "missing",
+                        "object"
+                      ]
+                    ]
+                  },
+                  "then": []
+                }
+              ],
+              "default": [
+                {
+                  "$map": {
+                    "input": "$appointmentId_lookup_visits",
+                    "as": "value",
+                    "in": {
+                      "$arrayElemAt": [
+                        {
+                          "$switch": {
+                            "branches": [
+                              {
+                                "case": {
+                                  "$isArray": "$$value.member.memberAddresses.zip"
+                                },
+                                "then": "$$value.member.memberAddresses.zip"
+                              },
+                              {
+                                "case": {
+                                  "$in": [
+                                    {
+                                      "$type": "$$value.member.memberAddresses.zip"
+                                    },
+                                    [
+                                      "null",
+                                      "missing",
+                                      "object"
+                                    ]
+                                  ]
+                                },
+                                "then": []
+                              }
+                            ],
+                            "default": [
+                              "$$value.member.memberAddresses.zip"
+                            ]
+                          }
+                        },
+                        0
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          0
+        ]
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "date": {
+        "$cond": {
+          "if": {
+            "$eq": [
+              {
+                "$type": "$date"
+              },
+              "date"
+            ]
+          },
+            "then": {
+              "$dateToString": {
+                "format": "%m-%d-%Y",
+                "date": "$date"
+              }
+            },
+            "else": null
+          }
+        },
+        "slotTime": {
+          "$cond": {
+            "if": {
+              "$eq": [
+                {
+                  "$type": "$slotTime"
+                },
+                "date"
+              ]
+            },
+            "then": "$slotTime",
+            "else": null
+          }
+        },
+        "startDateTime": {
+          "$cond": {
+            "if": {
+              "$eq": [
+                {
+                  "$type": "$startDateTime"
+                },
+                "date"
+              ]
+            },
+            "then": "$startDateTime",
+            "else": null
+          }
+        }
+      }
+    },
+    {
+      "$addFields": {
+        "providerName": {
+          "$ifNull": ["$providerName", "defaultProviderName"]
+        },
+        "email": {
+          "$ifNull": ["$email", "defaultEmail"]
+        }
+      }
+    },
+    {
+      "$addFields": {
+        "__alias_2": "$date",
+        "__alias_3":"$slotTime",
+        "__alias_4": {
+          "year": {
+            "$year": "$startDateTime"
+          },
+          "month": {
+            "$subtract": [
+              {
+                "$month": "$startDateTime"
+              },
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+    "$group": {
+
+      "_id": {
+        "__alias_2": "$__alias_2",
+        "__alias_3": "$__alias_3",
+        "__alias_4": "$providerName",
+        "__alias_5": "$email",
+        "__alias_6": "$providerId",
+        "__alias_7": "$status",
+        "__alias_0": "$__alias_0",
+        "__alias_1": "$__alias_1"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "__alias_2": "$_id.__alias_2",
+      "__alias_3": "$_id.__alias_3",
+      "__alias_4": "$_id.__alias_4",
+      "__alias_5": "$_id.__alias_5",
+      "__alias_6": "$_id.__alias_6",
+      "__alias_7": "$_id.__alias_7",
+      "__alias_0": "$_id.__alias_0",
+      "__alias_1": "$_id.__alias_1"
+    }
+  },
+  {
+    "$project": {
+      
+      "ProviderName": "$__alias_4",
+      "ProviderEmail": "$__alias_5",
+      "ProviderId": "$__alias_6",
+      "Date": "$__alias_2",
+      "SlotTime": "$__alias_3",
+      "Status": "$__alias_7",
+      "Appointment Date": "$__alias_0",
+      "Zip": "$__alias_1",
+      "_id": 0
+    }
+  },
+  {
+    "$sort": {
+      "ProviderName": -1
+    }
+  },
+  {
+    "$limit": 50000
+  }
+]

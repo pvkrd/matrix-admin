@@ -1,0 +1,253 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_health",
+        "parameters": [
+          {
+            "name": "Ocp-Apim-Subscription-Key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "health"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/providers/slots": {
+      "get": {
+        "operationId": "ProvidersController_getSlots",
+        "parameters": [
+          {
+            "name": "query",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "providers"
+        ]
+      },
+      "delete": {
+        "operationId": "ProvidersController_removeString",
+        "parameters": [
+          {
+            "name": "query",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "providers"
+        ]
+      },
+      "patch": {
+        "operationId": "ProvidersController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProviderSlotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "providers"
+        ]
+      },
+      "post": {
+        "operationId": "ProvidersController_createSlots",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProviderSlotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "providers"
+        ]
+      }
+    },
+    "/providers/slots/update": {
+      "patch": {
+        "operationId": "ProvidersController_emails",
+        "parameters": [
+          {
+            "name": "query",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "update",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "providers"
+        ]
+      }
+    },
+    "/reports/generate": {
+      "get": {
+        "operationId": "ReportsController_getReports",
+        "parameters": [
+          {
+            "name": "reportType",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/sendSms": {
+      "post": {
+        "operationId": "SmsController_sendSms",
+        "parameters": [
+          {
+            "name": "authToken",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Send SMS"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Matrix Member's App",
+    "description": "The Matrix Member API description",
+    "version": "0.1",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "Authorization": {
+        "scheme": "Bearer",
+        "bearerFormat": "Bearer",
+        "description": "Please enter token in following format: Bearer <JWT>",
+        "name": "Authorization",
+        "type": "http",
+        "in": "Header"
+      }
+    },
+    "schemas": {
+      "UpdateProviderSlotDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateProviderSlotDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SmsRequest": {
+        "type": "object",
+        "properties": {
+          "toNumber": {
+            "type": "string"
+          },
+          "smsMessage": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "toNumber",
+          "smsMessage"
+        ]
+      }
+    }
+  }
+}

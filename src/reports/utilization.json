@@ -1,0 +1,60 @@
+[
+    {
+      "$match": {
+        "$or": [
+          { "status": "booked" },
+          { "status": "available" }
+        ]
+      }
+    },
+    {
+      "$group": {
+        "_id": {
+          "date": {
+            "$dateToString": { "format": "%Y-%m-%d", "date": "$date" }
+          },
+          "providerId": "$providerId" ,
+          "providerName":"$providerName",
+          "email":"$email"
+        },
+        "booked": {
+          "$sum": {
+            "$cond": [{ "$eq": ["$status", "booked"] }, 1, 0]
+          }
+        },
+        "available": {
+          "$sum": {
+            "$cond": [{ "$eq": ["$status", "available"] }, 1, 0]
+          }
+        }
+      }
+    },
+    {
+      "$addFields": {
+        "newProviderId": "$_id.providerId",
+        "newProviderName": "$_id.providerName",
+        "newProviderEmail": "$_id.email",
+        "newDate": "$_id.date",
+        "newAvailable": "$available",
+        "newBooked": "$booked",
+        "newUtilization": {
+          "$multiply": [
+            { "$divide": ["$booked", { "$add": ["$booked", "$available"] }] },
+            100
+          ]
+        }
+      }
+    },
+    {
+      "$project": {
+        "_id": 0,
+        "ProviderId": "$newProviderId",
+        "Provider Name": "$newProviderName",
+        "Provider Email": "$newProviderEmail",
+        "Date": "$newDate",
+        "Total Available": "$newAvailable",
+        "Total Booked": "$newBooked",
+        "Utilization": "$newUtilization"
+      }
+    }
+  ]  

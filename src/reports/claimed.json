@@ -1,0 +1,119 @@
+[
+    {
+      "$bucket": {
+        "groupBy": "$claimedBefore",
+        "boundaries": [
+          0,
+          1,
+          6,
+          13,
+          14
+        ],
+        "default": "Claimed Before 14 Days",
+        "output": {
+          "count": {
+            "$sum": 1
+          },
+          "documents": {
+            "$push": "$$ROOT"
+          }
+        }
+      }
+    },
+    {
+      "$project": {
+        "_id": 0,
+        "label": {
+          "$switch": {
+            "branches": [
+              {
+                "case": {
+                  "$eq": [
+                    "$_id",
+                    0
+                  ]
+                },
+                "then": "Claimed on the day of the visit"
+              },
+              {
+                "case": {
+                  "$eq": [
+                    "$_id",
+                    1
+                  ]
+                },
+                "then": "Claimed   before 5 Days "
+              },
+              {
+                "case": {
+                  "$eq": [
+                    "$_id",
+                    6
+                  ]
+                },
+                "then": "Claimed between 6-12 Days "
+              },
+              {
+                "case": {
+                  "$eq": [
+                    "$_id",
+                    13
+                  ]
+                },
+                "then": "Claimed  14 or 13 days ahead"
+              }
+            ],
+            "default": "Claimed before 14 Days"
+          }
+        },
+        "count": 1,
+        "documents": 1
+      }
+    },
+    {
+      "$group": {
+        "_id": {
+          "__alias_0": "$label"
+        },
+        "__alias_1": {
+          "$sum": "$count"
+        }
+      }
+    },
+    {
+      "$project": {
+        "_id": 0,
+        "__alias_0": "$_id.__alias_0",
+        "__alias_1": 1
+      }
+    },
+    {
+      "$project": {
+        "Count": "$__alias_1",
+        "Claimed Before": "$__alias_0",
+        "_id": 0
+      }
+    },
+    {
+      "$addFields": {
+        "__agg_sum": {
+          "$sum": [
+            "$value"
+          ]
+        }
+      }
+    },
+    {
+      "$sort": {
+        "__agg_sum": -1
+      }
+    },
+    {
+      "$project": {
+        "__agg_sum": 0
+      }
+    },
+    {
+      "$limit": 5000
+    }
+  ]

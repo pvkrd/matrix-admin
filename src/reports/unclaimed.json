@@ -1,0 +1,161 @@
+[
+  {
+    "$match": {
+      "$or": [
+        {
+          "status": {
+            "$in": [
+              "UNSCHEDULED"
+            ]
+          }
+        },
+        {
+          "status": "CANCELLED",
+          "dispositionReason": {
+            "$regex": "Unclaimed",
+            "$options": "i"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "$match": {
+      "msa.name": {
+        "$nin": []
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "__alias_0": {
+        "$arrayElemAt": [
+          {
+            "$switch": {
+              "branches": [
+                {
+                  "case": {
+                    "$isArray": "$member.memberAddresses.zip"
+                  },
+                  "then": "$member.memberAddresses.zip"
+                },
+                {
+                  "case": {
+                    "$in": [
+                      {
+                        "$type": "$member.memberAddresses.zip"
+                      },
+                      [
+                        "null",
+                        "missing",
+                        "object"
+                      ]
+                    ]
+                  },
+                  "then": []
+                }
+              ],
+              "default": [
+                "$member.memberAddresses.zip"
+              ]
+            }
+          },
+          0
+        ]
+      }
+    }
+  },
+  {
+    "$unwind": "$slotPreferences"
+  },
+  {
+    "$addFields": {
+      "slotPreferences": {
+        "$cond": {
+          "if": {
+            "$eq": [
+              {
+                "$type": "$slotPreferences"
+              },
+              "date"
+            ]
+          },
+          "then": "$slotPreferences",
+          "else": null
+        }
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "__alias_1": "$slotPreferences"
+    }
+  },
+  {
+    "$addFields": {
+      "__alias_6": {
+        "$ifNull": ["$member.memberId", "NA"]
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "__alias_5": {
+        "$ifNull": ["$member.lastName", "NA"]
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "__alias_4": {
+        "$ifNull": ["$member.firstName", "NA"]
+      }
+    }
+  },
+  {
+  "$group": {
+    "_id": {
+      "__alias_2": "$msa.name",
+      "__alias_0": "$__alias_0",
+      "__alias_3": "$status",
+      "__alias_1": "$__alias_1",
+      "__alias_4": "$__alias_4",
+      "__alias_5": "$__alias_5",
+      "__alias_6": "$__alias_6"
+    }
+  }
+},
+{
+  "$project": {
+    "_id": 0,
+    "__alias_2": "$_id.__alias_2",
+    "__alias_0": "$_id.__alias_0",
+    "__alias_3": "$_id.__alias_3",
+    "__alias_1": "$_id.__alias_1",
+    "__alias_4": "$_id.__alias_4",
+    "__alias_5": "$_id.__alias_5",
+    "__alias_6": "$_id.__alias_6"
+  }
+},
+{
+  "$project": {
+    "State": "$__alias_2",
+    "ZipCode": "$__alias_0",
+    "Status": "$__alias_3",
+    "SlotTime": "$__alias_1",
+    "MemberId": "$__alias_6",
+    "First Name": "$__alias_4",
+    "Last Name": "$__alias_5",
+   
+    "_id": 0
+  }
+},
+{
+  "$sort": {
+    "MemberId": 1
+  }
+},
+{
+  "$limit": 50000
+}
+]

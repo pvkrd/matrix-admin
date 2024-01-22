@@ -1,0 +1,30 @@
+[
+    {
+      "$group": {
+        "_id": null,
+        "total": {
+          "$sum": 1
+        },
+        "eligibleClients": {
+          "$sum": {
+            "$cond": [
+              {
+                "$eq": ["$isClientEligible", true]
+              },
+              1,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "$project": {
+        "_id": 0,
+        "Total Members": "$total",
+        "Eligible Members": "$eligibleClients"
+      }
+    }
+  ]
+
+  

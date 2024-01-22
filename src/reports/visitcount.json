@@ -1,0 +1,86 @@
+[
+    {
+      "$addFields": {
+        "updatedAt": {
+          "$cond": {
+            "if": {
+              "$eq": [
+                {
+                  "$type": "$updatedAt"
+                },
+                "date"
+              ]
+            },
+            "then": "$updatedAt",
+            "else": null
+          }
+        }
+      }
+    },
+    {
+      "$addFields": {
+        "__alias_0": 
+            {
+                "$dateToString": { "format": "%Y-%m-%d", "date": "$updatedAt" }
+              }
+         
+        
+      }
+    },
+    {
+      "$addFields": {
+        "__count_by_value": {
+          "k": "status",
+          "v": "$status"
+        }
+      }
+    },
+    {
+      "$group": {
+        "_id": {
+          "__alias_0": "$__alias_0",
+          "__alias_1": "$__count_by_value.v"
+        },
+        "__alias_2": {
+          "$sum": {
+            "$cond": [
+              {
+                "$ne": [
+                  {
+                    "$type": "$status"
+                  },
+                  "missing"
+                ]
+              },
+              1,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "$project": {
+        "_id": 0,
+        "__alias_0": "$_id.__alias_0",
+        "__alias_1": "$_id.__alias_1",
+        "__alias_2": 1
+      }
+    },
+    {
+      "$project": {
+       
+        "Date": "$__alias_0",
+        "Status": "$__alias_1",
+        "Count": "$__alias_2",
+        "_id": 0
+      }
+    },
+    {
+      "$sort": {
+        "Date": 1
+      }
+    }
+  
+    
+  ]
